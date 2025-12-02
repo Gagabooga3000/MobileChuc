@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="76dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:minWidth="0dp"
+    android:paddingHorizontal="4dp"
+    android:paddingVertical="8dp"
+    android:background="@android:color/transparent">
+
+    <TextView
+        android:id="@+id/day_of_week_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ПН"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.12"
+        android:textColor="@color/calendar_weekday_text"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/day_of_month_text"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:text="28"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        android:textColor="@color/calendar_day_number"
+        android:background="@drawable/bg_calendar_day"
+        android:duplicateParentState="true" />
+
+</LinearLayout>

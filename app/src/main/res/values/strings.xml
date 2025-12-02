@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">chuc</string>
+    <string name="app_version_label">version 0.3 beta</string>
+    <string name="password_toggle_show">Показать пароль</string>
+    <string name="password_toggle_hide">Скрыть пароль</string>
+    <string name="teacher_status_active">Активен</string>
+    <string name="teacher_status_archived">Архив</string>
+    <string name="group_start_year">Набор %1$d</string>
+</resources>

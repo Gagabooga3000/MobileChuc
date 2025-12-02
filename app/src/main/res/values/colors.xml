@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Базовые цвета -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Светлая палитра -->
+    <color name="bg_primary">#FFF7F0</color>
+    <color name="bg_secondary">#FFFFFFFF</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_card_alt">#FFEFE2</color>
+    <color name="divider_dark">#F4DCC5</color>
+
+    <!-- Более мягкий, менее насыщенный оранжевый -->
+    <color name="brand_primary">#F28A3D</color>
+    <color name="brand_primary_pressed">#D87226</color>
+    <color name="brand_secondary">#102A54</color>
+    <color name="brand_secondary_dark">#071632</color>
+
+    <color name="text_primary">#1B1D21</color>
+    <color name="text_secondary">#4A4F5C</color>
+    <color name="text_muted">#9197A8</color>
+    <color name="text_inverse">#FFFFFFFF</color>
+    <color name="text_error">#D72C4E</color>
+
+    <color name="chip_success_bg">#E9F7EF</color>
+    <color name="chip_success_text">#1B6C4A</color>
+    <color name="chip_warning_bg">#FFF3E1</color>
+    <color name="chip_warning_text">#A34700</color>
+    <color name="chip_error_bg">#FFE9EE</color>
+    <color name="chip_error_text">#B6203B</color>
+
+    <color name="input_background">#FFFFFFFF</color>
+    <color name="input_stroke">#F0D8C7</color>
+
+    <color name="overlay_scrim">#800B1324</color>
+
+    <!-- Календарь -->
+    <color name="calendar_weekday_text">#1B1D21</color>
+    <color name="calendar_day_number">#1B1D21</color>
+    <color name="calendar_day_number_selected">#FFFFFFFF</color>
+</resources>
