@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Размеры для планшетов (ширина экрана >= 600dp) -->
+    <dimen name="image_height">0dp</dimen>
+    <dimen name="form_width">400dp</dimen>
+    <dimen name="form_padding">48dp</dimen>
+    <dimen name="form_margin_top">64dp</dimen>
+    <dimen name="form_margin_bottom">64dp</dimen>
+    <dimen name="edit_text_height">64dp</dimen>
+    <dimen name="edit_text_padding">20dp</dimen>
+    <dimen name="button_width">400dp</dimen>
+    <dimen name="text_size_normal">18sp</dimen>
+    <dimen name="text_size_title">32sp</dimen>
+</resources>

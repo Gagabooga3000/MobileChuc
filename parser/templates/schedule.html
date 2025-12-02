@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Парсер расписания</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .schedule-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+               /* Горизонтальное расписание */
+               .schedule-horizontal {
+                   margin-top: 20px;
+               }
+               
+               .day-section {
+                   background: white;
+                   border-radius: 12px;
+                   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                   margin-bottom: 20px;
+                   overflow: hidden;
+                   border: 1px solid #f0f0f0;
+               }
+               
+               .day-header {
+                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                   color: white;
+                   padding: 15px 20px;
+                   display: flex;
+                   align-items: center;
+                   justify-content: space-between;
+                   flex-wrap: wrap;
+                   gap: 10px;
+               }
+               
+               .day-name {
+                   font-size: 1.3rem;
+                   font-weight: 700;
+                   margin: 0;
+                   display: flex;
+                   align-items: center;
+                   gap: 10px;
+               }
+               
+               .day-date {
+                   font-size: 0.9rem;
+                   opacity: 0.9;
+               }
+               
+               .lesson-count {
+                   background: rgba(255,255,255,0.2);
+                   padding: 4px 12px;
+                   border-radius: 15px;
+                   font-size: 0.8rem;
+                   font-weight: 600;
+               }
+               
+               .lessons-list {
+                   padding: 20px;
+               }
+               
+               .lesson-row {
+                   display: flex;
+                   align-items: center;
+                   padding: 12px 15px;
+                   margin-bottom: 8px;
+                   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                   border-radius: 8px;
+                   border-left: 4px solid #28a745;
+                   transition: all 0.3s ease;
+                   gap: 15px;
+               }
+               
+               .lesson-row:hover {
+                   transform: translateX(5px);
+                   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                   border-left-color: #20c997;
+               }
+               
+               .lesson-row:last-child {
+                   margin-bottom: 0;
+               }
+               
+               .lesson-time {
+                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                   color: white;
+                   padding: 6px 12px;
+                   border-radius: 15px;
+                   font-weight: 600;
+                   font-size: 0.85rem;
+                   min-width: 60px;
+                   text-align: center;
+               }
+               
+               .lesson-info {
+                   font-weight: 500;
+                   color: #333;
+                   flex: 1;
+                   font-size: 0.95rem;
+               }
+               
+               .no-lessons {
+                   text-align: center;
+                   padding: 40px 20px;
+                   color: #6c757d;
+               }
+               
+               .no-lessons i {
+                   font-size: 3rem;
+                   margin-bottom: 15px;
+                   opacity: 0.5;
+               }
+               
+               .no-lessons span {
+                   font-size: 1.1rem;
+               }
+        
+        .day-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .day-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .day-card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+        
+        .day-card:hover .day-card-header::before {
+            animation: shimmer 1.5s ease-in-out;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .day-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+               .day-date {
+                   font-size: 0.9rem;
+                   opacity: 0.9;
+                   margin-top: 5px;
+               }
+               
+               .lesson-count {
+                   font-size: 0.8rem;
+                   opacity: 0.8;
+                   margin-top: 3px;
+                   background: rgba(255,255,255,0.2);
+                   padding: 2px 8px;
+                   border-radius: 10px;
+                   display: inline-block;
+               }
+        
+        .lessons-container {
+            padding: 20px;
+        }
+        
+        .lesson-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lesson-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .lesson-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left-color: #20c997;
+        }
+        
+        .lesson-time {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .lesson-content {
+            margin-top: 10px;
+        }
+        
+        .lesson-subject {
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .lesson-teacher {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        
+        .lesson-room {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .lesson-type {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .empty-day {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-day i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .empty-day p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        /* Компактные карточки для мобильных устройств */
+        .mobile-schedule {
+            display: none;
+        }
+        
+        .day-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .day-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        
+        .lesson-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lesson-item:last-child {
+            border-bottom: none;
+        }
+        
+        .lesson-time {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 80px;
+        }
+        
+        .lesson-content {
+            flex: 1;
+            margin-left: 15px;
+        }
+        
+        .lesson-subject {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .lesson-teacher {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .lesson-room {
+            font-size: 0.8rem;
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        /* Кнопки навигации */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: none;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            color: #333;
+            text-decoration: none;
+        }
+        
+        /* Информационная панель */
+        .info-panel {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-icon {
+            width: 20px;
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .schedule-horizontal {
+                margin-top: 15px;
+            }
+            
+            .day-header {
+                padding: 12px 15px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .day-name {
+                font-size: 1.1rem;
+            }
+            
+            .lesson-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 15px;
+            }
+            
+            .lesson-time {
+                align-self: flex-start;
+            }
+            
+            .lesson-info {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+            
+            .schedule-container {
+                padding: 15px;
+            }
+            
+            .nav-buttons {
+                justify-content: center;
+            }
+        }
+        
+        /* Анимации */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Стили для пустых ячеек */
+        .empty-cell {
+            background: #f8f9fa;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Индикатор загрузки */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-calendar-alt"></i> Парсер расписания
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Кнопки навигации -->
+        <div class="nav-buttons">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Назад к списку
+            </a>
+            <button class="refresh-btn" onclick="refreshSchedule()">
+                <i class="fas fa-sync-alt"></i> Обновить
+            </button>
+        </div>
+
+        <!-- Основной контейнер расписания -->
+        <div class="schedule-container fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">
+                    <i class="fas fa-calendar-week"></i> {{ title }}
+                </h2>
+                <div class="text-muted">
+                    <small>
+                        <i class="fas fa-clock"></i> 
+                        {{ schedule_data.timestamp[:19] }}
+                    </small>
+                </div>
+            </div>
+
+            {% if schedule_data.schedule_html %}
+                <!-- Современный вид расписания -->
+                <div class="schedule-content">
+                    <div id="scheduleCards">
+                        <div class="text-center">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2">Загружаем расписание...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Данные для JavaScript (полностью скрыты) -->
+                <script type="application/json" id="scheduleData">
+                    {{ schedule_data.schedule_html|safe|tojson }}
+                </script>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Расписание не найдено или не загружено
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Информационная панель -->
+        <div class="info-panel">
+            <div class="info-item">
+                <i class="fas fa-tag info-icon"></i>
+                <span><strong>Тип:</strong> 
+                    {% if schedule_data.schedule_type == "group" %}
+                        Группа
+                    {% else %}
+                        Преподаватель
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-user info-icon"></i>
+                <span><strong>Объект:</strong> {{ schedule_data.group_or_teacher }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-calendar info-icon"></i>
+                <span><strong>Дата:</strong> {{ schedule_data.date or 'Текущая неделя' }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-external-link-alt info-icon"></i>
+                <span><strong>Источник:</strong> <a href="http://miterra.chuc.ru" target="_blank" class="text-decoration-none">miterra.chuc.ru</a></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Создание современного дизайна расписания
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM загружен, начинаем генерацию расписания...');
+            
+            // Добавляем небольшую задержку для полной загрузки DOM
+            setTimeout(() => {
+                try {
+                    console.log('Запускаем generateScheduleCards...');
+                    generateScheduleCards();
+                } catch (error) {
+                    console.error('Ошибка при генерации карточек:', error);
+                    showError('Ошибка при загрузке расписания: ' + error.message);
+                }
+            }, 100);
+        });
+
+        function generateScheduleCards() {
+            console.log('=== НАЧАЛО ГЕНЕРАЦИИ КАРТОЧЕК ===');
+            console.log('Начинаем генерацию карточек расписания...');
+            
+            // Получаем данные из JSON скрипта
+            const scheduleDataScript = document.getElementById('scheduleData');
+            if (!scheduleDataScript) {
+                console.error('Скрипт с данными не найден!');
+                showError('Данные расписания не найдены');
+                return;
+            }
+            
+            let scheduleHtml;
+            try {
+                scheduleHtml = JSON.parse(scheduleDataScript.textContent);
+                console.log('Данные расписания получены из JSON:', scheduleHtml);
+            } catch (error) {
+                console.error('Ошибка парсинга JSON:', error);
+                showError('Ошибка при загрузке данных расписания');
+                return;
+            }
+            
+            // Создаем временный элемент для парсинга HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = scheduleHtml;
+            const table = tempDiv.querySelector('table');
+            
+            if (!table) {
+                console.error('Таблица не найдена в данных!');
+                showError('Таблица расписания не найдена');
+                return;
+            }
+            
+            console.log('Таблица найдена:', table);
+
+            const scheduleCards = document.getElementById('scheduleCards');
+            if (!scheduleCards) {
+                console.error('Контейнер для карточек не найден!');
+                return;
+            }
+
+            console.log('Таблица найдена, начинаем парсинг...');
+
+            // Парсим таблицу и создаем карточки
+            const rows = Array.from(table.querySelectorAll('tr'));
+            console.log('Найдено строк:', rows.length);
+            
+            if (rows.length === 0) {
+                console.error('Таблица пуста!');
+                showError('Таблица расписания пуста');
+                return;
+            }
+            
+            const days = [];
+            const scheduleData = {};
+            
+            // Инициализируем массив для понедельника
+            scheduleData['Понедельник'] = [];
+            scheduleData['Вторник'] = [];
+            scheduleData['Среда'] = [];
+            
+            // Извлекаем заголовки дней
+            const headerRow = rows[0];
+            if (headerRow) {
+                const headerCells = Array.from(headerRow.querySelectorAll('th'));
+                console.log('Найдено заголовков:', headerCells.length);
+                
+                headerCells.forEach((cell, index) => {
+                    const cellText = cell.textContent.trim();
+                    console.log(`Заголовок ${index}: "${cellText}"`);
+                    
+                    // Пропускаем первый столбец (Время) и ищем дни недели
+                    if (index > 0 && cellText && !cellText.includes('Время')) {
+                        days.push(cellText);
+                        if (!scheduleData[cellText]) {
+                            scheduleData[cellText] = [];
+                        }
+                        console.log('Добавлен день:', cellText);
+                    }
+                });
+            }
+            
+            console.log('Дни недели:', days);
+            console.log('Инициализированные данные:', scheduleData);
+            
+            // Извлекаем времена и занятия
+            for (let i = 2; i < rows.length; i++) { // Начинаем с 2, пропускаем заголовки и даты
+                const row = rows[i];
+                const cells = Array.from(row.querySelectorAll('td'));
+                
+                if (cells.length > 0) {
+                    const timeCell = cells[1]; // Время во второй ячейке
+                    const timeText = timeCell ? timeCell.textContent.trim() : '';
+                    
+                    // Ищем строки с временем (формат HH:MM)
+                    if (timeText && timeText.match(/\d{2}:\d{2}/)) {
+                        const time = timeText;
+                        console.log('Найдено время:', time);
+                        
+                        // Проходим по всем дням недели
+                        for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+                            const dayName = days[dayIndex];
+                            const cellIndex = dayIndex + 2; // Занятия начинаются с 3-й ячейки
+                            
+                            if (cellIndex < cells.length) {
+                                const dayContent = cells[cellIndex] ? cells[cellIndex].textContent.trim() : '';
+                                
+                                if (dayContent && dayContent !== '') {
+                                    console.log(`Занятие в ${dayName} в ${time}:`, dayContent);
+                                    
+                                    // Объединяем все части занятия
+                                    let fullLesson = dayContent;
+                                    let teacher = '';
+                                    let room = '';
+                                    
+                                    // Ищем преподавателя и аудиторию в следующих ячейках
+                                    // Структура: ячейка 1 - предмет, ячейка 2 - тип, ячейка 3 - преподаватель, ячейка 4 - аудитория
+                                    if (cells.length > cellIndex + 1 && cells[cellIndex + 1]) {
+                                        const cell2Content = cells[cellIndex + 1].textContent.trim();
+                                        if (cell2Content && cell2Content !== '') {
+                                            // Это может быть тип занятия или преподаватель
+                                            if (cell2Content.match(/[А-Я][а-я]+\s+[А-Я]\.[А-Я]\./)) {
+                                                teacher = cell2Content;
+                                            } else if (cell2Content.match(/\d{3,4}/)) {
+                                                room = 'Аудитория ' + cell2Content;
+                                            } else {
+                                                // Это тип занятия
+                                                fullLesson += ' (' + cell2Content + ')';
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (cells.length > cellIndex + 2 && cells[cellIndex + 2]) {
+                                        const cell3Content = cells[cellIndex + 2].textContent.trim();
+                                        if (cell3Content && cell3Content !== '') {
+                                            if (cell3Content.match(/[А-Я][а-я]+\s+[А-Я]\.[А-Я]\./)) {
+                                                teacher = cell3Content;
+                                            } else if (cell3Content.match(/\d{3,4}/)) {
+                                                room = 'Аудитория ' + cell3Content;
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (cells.length > cellIndex + 3 && cells[cellIndex + 3]) {
+                                        const cell4Content = cells[cellIndex + 3].textContent.trim();
+                                        if (cell4Content && cell4Content !== '') {
+                                            if (cell4Content.match(/\d{3,4}/)) {
+                                                room = 'Аудитория ' + cell4Content;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Создаем объект занятия
+                                    const lesson = {
+                                        time: time,
+                                        subject: fullLesson,
+                                        teacher: teacher,
+                                        room: room,
+                                        type: ''
+                                    };
+                                    
+                                    // Определяем тип занятия
+                                    if (fullLesson.includes('Лекция')) {
+                                        lesson.type = 'Лекция';
+                                    } else if (fullLesson.includes('Практика')) {
+                                        lesson.type = 'Практика';
+                                    } else if (fullLesson.includes('Лабораторная')) {
+                                        lesson.type = 'Лабораторная';
+                                    }
+                                    
+                                    // Проверяем, что массив для дня существует
+                                    if (!scheduleData[dayName]) {
+                                        scheduleData[dayName] = [];
+                                    }
+                                    
+                                    scheduleData[dayName].push(lesson);
+                                    console.log(`Добавлено занятие в ${dayName}:`, lesson);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Проверяем, что данные правильно распределены по дням
+            console.log('Финальные данные по дням:');
+            Object.keys(scheduleData).forEach(day => {
+                console.log(`${day}: ${scheduleData[day].length} занятий`);
+                scheduleData[day].forEach(lesson => {
+                    console.log(`  ${lesson.time}: ${lesson.subject}`);
+                });
+            });
+            
+            console.log('Данные расписания:', scheduleData);
+            
+            // Генерируем HTML для горизонтального расписания
+            let scheduleHTML = '<div class="schedule-horizontal">';
+            
+            console.log('Начинаем генерацию HTML для дней:', days);
+            
+            days.forEach(day => {
+                const dayLessons = scheduleData[day] || [];
+                const dayDate = getDayDate(day);
+                
+                console.log(`Генерируем расписание для ${day}: ${dayLessons.length} занятий`);
+                
+                scheduleHTML += `
+                    <div class="day-section">
+                        <div class="day-header">
+                            <h3 class="day-name">${day}</h3>
+                            <span class="day-date">${dayDate}</span>
+                            <span class="lesson-count">${dayLessons.length} занятий</span>
+                        </div>
+                        <div class="lessons-list">
+                `;
+                
+                if (dayLessons.length > 0) {
+                    console.log(`Занятия в ${day}:`, dayLessons);
+                    dayLessons.forEach(lesson => {
+                        // Формируем строку в формате "предмет - препод аудитория"
+                        let lessonText = lesson.subject;
+                        if (lesson.teacher) {
+                            lessonText += ' - ' + lesson.teacher;
+                        }
+                        if (lesson.room) {
+                            lessonText += ' ' + lesson.room;
+                        }
+                        
+                        console.log(`Добавляем занятие: ${lesson.time} - ${lessonText}`);
+                        
+                        scheduleHTML += `
+                            <div class="lesson-row">
+                                <span class="lesson-time">${lesson.time}</span>
+                                <span class="lesson-info">${lessonText}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    console.log(`Нет занятий в ${day}`);
+                    scheduleHTML += `
+                        <div class="no-lessons">
+                            <i class="fas fa-calendar-times"></i>
+                            <span>Нет занятий</span>
+                        </div>
+                    `;
+                }
+                
+                scheduleHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            scheduleHTML += '</div>';
+            
+            console.log('Финальный HTML:', scheduleHTML);
+            scheduleCards.innerHTML = scheduleHTML;
+            
+            console.log('Карточки расписания сгенерированы успешно!');
+        }
+
+        function showError(message) {
+            const scheduleCards = document.getElementById('scheduleCards');
+            if (scheduleCards) {
+                scheduleCards.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        ${message}
+                    </div>
+                `;
+            }
+        }
+
+        function parseLessonContent(content, time) {
+            console.log(`Парсим занятие: "${content}" в ${time}`);
+            
+            // Парсим содержимое занятия
+            const lesson = {
+                time: time,
+                subject: content,
+                teacher: '',
+                room: '',
+                type: ''
+            };
+            
+            // Если содержимое пустое или содержит только пробелы
+            if (!content || content.trim() === '' || content.trim() === ' ') {
+                return null;
+            }
+            
+            // Простой парсинг - в реальном проекте можно улучшить
+            const parts = content.split(' ');
+            
+            // Ищем аудиторию (обычно последние цифры)
+            const roomMatch = content.match(/\d{3,4}/);
+            if (roomMatch) {
+                lesson.room = `Аудитория ${roomMatch[0]}`;
+            }
+            
+            // Ищем тип занятия
+            if (content.includes('Лекция')) {
+                lesson.type = 'Лекция';
+            } else if (content.includes('Практика')) {
+                lesson.type = 'Практика';
+            } else if (content.includes('Лабораторная')) {
+                lesson.type = 'Лабораторная';
+            }
+            
+            // Ищем преподавателя (обычно в конце)
+            const teacherMatch = content.match(/([А-Я][а-я]+\s+[А-Я]\.[А-Я]\.)/);
+            if (teacherMatch) {
+                lesson.teacher = teacherMatch[0];
+            }
+            
+            console.log('Результат парсинга:', lesson);
+            return lesson;
+        }
+
+        function getDayDate(dayName) {
+            // Получаем дату для дня недели
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            const targetDay = dayNames.indexOf(dayName);
+            
+            if (targetDay !== -1) {
+                const diff = targetDay - dayOfWeek;
+                const targetDate = new Date(today);
+                targetDate.setDate(today.getDate() + diff);
+                
+                return targetDate.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit'
+                });
+            }
+            
+            return '';
+        }
+
+        function refreshSchedule() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            const icon = refreshBtn.querySelector('i');
+            
+            // Показываем анимацию загрузки
+            icon.classList.add('fa-spin');
+            refreshBtn.disabled = true;
+            
+            // Перезагружаем страницу
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+
+        // Добавляем интерактивность
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('lesson-cell')) {
+                e.target.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+
+        // Плавная прокрутка к расписанию
+        function scrollToSchedule() {
+            const scheduleContainer = document.querySelector('.schedule-container');
+            if (scheduleContainer) {
+                scheduleContainer.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Автоматическое обновление каждые 5 минут
+        setInterval(() => {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn && !refreshBtn.disabled) {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Обновить <span class="badge bg-warning">!</span>';
+            }
+        }, 300000); // 5 минут
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".MainActivity">
+
+    <!-- Контейнер для ImageView с градиентным оверлеем -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+        
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pupu"
+            android:contentDescription="Фоновое изображение" />
+            
+        <!-- Градиентный оверлей для горизонтального перехода -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/horizontal_gradient" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="48dp"
+        android:background="#CD8649">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Добро пожаловать в приложение"
+            android:textSize="32sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="64dp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/login"
+            android:layout_width="@dimen/form_width"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="Логин"
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
+            android:minHeight="@dimen/edit_text_height"
+            android:background="@android:drawable/edit_text"
+            android:padding="@dimen/edit_text_padding"
+            android:textSize="@dimen/text_size_normal" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="@dimen/form_width"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:textColor="@color/black"
+            android:hint="Пароль"
+            android:textColorHint="@color/black"
+            android:minHeight="@dimen/edit_text_height"
+            android:background="@android:drawable/edit_text"
+            android:padding="@dimen/edit_text_padding"
+            android:inputType="textPassword"
+            android:textSize="@dimen/text_size_normal" />
+
+        <Button
+            android:id="@+id/logIn"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#698DB8"
+            android:text="Войти"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:minHeight="@dimen/edit_text_height" />
+
+    </LinearLayout>
+
+</LinearLayout>
