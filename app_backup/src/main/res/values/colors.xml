@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="orange">#CC8549</color>
+    
+    <!-- Новые цвета для улучшенного дизайна -->
+    <color name="background_gradient">@drawable/background_gradient</color>
+    <color name="primary_blue">#1976D2</color>
+    <color name="primary_blue_dark">#1565C0</color>
+    <color name="light_blue">#E3F2FD</color>
+    <color name="accent_blue">#2196F3</color>
+</resources>
